@@ -17,8 +17,8 @@ if not CLIENT_ID or not CLIENT_SECRET:
 TOKEN_FILE = "breezeway_token.json"
 BASE_URL = "https://api.breezeway.io"
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or "7979021981:AAHO3rai-2XIcjIu3Rq27Sm5GbPuUf03feE"
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID") or "-4879020817"
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") 
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID") 
 
 BASE_PROPERTY_URL = f"{BASE_URL}/public/inventory/v1/property"
 BASE_RESERVATION_URL = f"{BASE_URL}/public/inventory/v1/reservation"

@@ -184,6 +184,30 @@ def get_checkin_cleaning_status(prop_id, headers, last_checkout_date):
 
     return f"Ready - {task_name} - Cleaned by {cleaner_name} - {finished_date}"
 
+# --- Fetch yesterday's completed cleanings ---
+def fetch_yesterday_cleanings(headers):
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    property_map = fetch_property_map(headers)
+    output = [f"\nYesterday’s Cleaning Summary ({yesterday})"]
+
+    for prop_id, prop_info in property_map.items():
+        prop_name = prop_info["name"]
+        tasks = fetch_tasks(prop_id, yesterday, headers)
+        if not tasks:
+            continue
+        for task in tasks:
+            if task.get("type_department") != "housekeeping":
+                continue
+            task_name = task.get("type") or task.get("name") or "Unnamed Task"
+            assignments = task.get("assignments", [])
+            if not assignments:
+                continue
+            for assignment in assignments:
+                cleaner_name = assignment.get("name") or "Unknown"
+                status = "Completed" if assignment.get("type_task_user_status") == "completed" or task.get("finished_at") else "Not completed"
+                output.append(f"- {prop_name} - {task_name} - {cleaner_name} - {status}")
+    return "\n".join(output)
+
 
 
 # --- MAIN ---
@@ -277,7 +301,16 @@ if __name__ == "__main__":
     if not has_pending:
         output.append("No pending cleanings today.")
 
-    # --- Final message ---
-    final_message = "\n".join(output)
-    print(final_message)
-    send_to_telegram(final_message)
+    # --- Prepare Today's summary ---
+final_message = "\n".join(output)
+
+# --- Prepare Yesterday's summary ---
+yesterday_message = fetch_yesterday_cleanings(HEADERS)
+
+# --- Combine both messages ---
+combined_message = f"{final_message}\n\n{yesterday_message}"
+
+# --- Send single Telegram message ---
+print(combined_message)
+send_to_telegram(combined_message)
+

@@ -2,9 +2,9 @@ name: Daily Breezeway Script
 
 on:
   schedule:
-    # Runs every day at 08:30 AM UTC-5 → 01:30 PM UTC
-    - cron: '30 13 * * *'
-  workflow_dispatch:
+    # Runs every day at 07:00 AM CST (12:00 PM UTC)
+    - cron: '0 12 * * *'
+  workflow_dispatch:  # allows manual runs
 
 jobs:
   run-script:
